@@ -184,6 +184,7 @@ class EnnioStack:
         logging.info(
             f"Changes in changeset `{name}`: \n{format_changes(changes)}"
         )
+        self.execute_changeset(name, timeout)
         return changes
 
     def delete_stack(self):
