@@ -43,3 +43,26 @@ def clean_log_groups(stack_id):
                     # behaviour.
                     continue
                 raise
+
+
+def empty_s3_bucket(bucket_name):
+    """Remove all files in an S3 bucket."""
+    s3cli = boto3.client("s3")
+
+    # Determine whether this bucket exists.
+    try:
+        s3cli.head_bucket(Bucket=bucket_name)
+    except ClientError as err:
+        if err.response["Error"]["Code"] == "404":
+            # The bucket does not exist, no need to empty it.
+            logging.warning(f"Bucket does not exist: {bucket_name}.")
+            return
+        raise
+
+    logging.warning(f"Emptying bucket: {bucket_name}.")
+    bucket = boto3.resource("s3").Bucket(bucket_name)
+    versioning = s3cli.get_bucket_versioning(Bucket=bucket_name).get("Status")
+    if versioning in ["Enabled", "Suspended"]:
+        bucket.object_versions.delete()
+    else:
+        bucket.objects.all().delete()
