@@ -1,5 +1,11 @@
 # ennio
 
+[![image](https://img.shields.io/pypi/v/ennio.svg)](https://github.com/sportsbet/ennio)
+[![image](https://img.shields.io/pypi/l/ennio.svg)](https://github.com/sportsbet/ennio)
+[![image](https://img.shields.io/pypi/pyversions/ennio.svg)](https://github.com/sportsbet/ennio)
+
+[![image](./doc/ennio-logo.png)](https://github.com/sportsbet/ennio)
+
 Ennio is an interstack orchestration framework for AWS CloudFormation
 
 ## Installation
