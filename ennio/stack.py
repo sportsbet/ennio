@@ -46,6 +46,23 @@ class EnnioStack:
                 ]
         return resource_
 
+    @property
+    def status(self):
+        """
+        Return the status of the stack, if it exists.
+
+        This property is intentionally not cached.
+        """
+        try:
+            stack_info = self.cfn.describe_stacks(StackName=self.stack_name)
+            return stack_info["Stacks"][0]["StackStatus"]
+        except ClientError as error:
+            code = error.response["Error"]["Code"]
+            message = error.response["Error"]["Message"]
+            if code == "ValidationError" and message.endswith("does not exist"):
+                return
+            raise
+
     ############################################################################
     # Public APIs
     #
@@ -175,6 +192,10 @@ class EnnioStack:
         logging.info(f"Building/Updating {self.name} stack.")
         if params is None:
             params = {}
+
+        if self.status == "CREATE_FAILED":
+            self.delete_stack()
+
         name = self.create_changeset(template, params)
         try:
             changes = self.describe_changeset(name)
